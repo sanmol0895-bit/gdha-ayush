@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>always</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: radial-gradient(circle at top, #0b1026, #000);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Courier New', monospace;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Letter */
+#letter {
+  max-width: 760px;
+  padding: 24px;
+  font-size: 1.4rem;
+  line-height: 1.9;
+  text-align: center;
+  white-space: pre-line;
+  text-shadow: 0 0 12px rgba(255,255,255,0.6);
+  animation: breathe 4s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
+/* Tap message */
+#tap {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.7;
+  z-index: 3;
+}
+
+/* Hearts */
+.heart {
+  position: absolute;
+  bottom: -20px;
+  font-size: 16px;
+  color: rgba(255,105,180,0.8);
+  animation: floatUp linear infinite;
+  filter: drop-shadow(0 0 6px hotpink);
+}
+
+@keyframes floatUp {
+  from {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-120vh) scale(1.4);
+    opacity: 0;
+  }
+}
+
+/* Stars */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  opacity: 0.6;
+  animation: drift linear infinite;
+}
+
+@keyframes drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(100vh); }
+}
+</style>
+</head>
+
+<body>
+
+<div id="letter"></div>
+<div id="tap">tap anywhere to play the song</div>
+
+<!-- Hidden YouTube Player -->
+<iframe id="yt"
+  src="https://www.youtube.com/embed/kPGzTH3dLOU?enablejsapi=1&loop=1&playlist=kPGzTH3dLOU"
+  style="display:none;"
+  allow="autoplay">
+</iframe>
+
+<script>
+/* LETTER TEXT (UNCHANGED) */
+const text = `ayush, there are bad days. days when my mind feels heavy, when emotions spill out the wrong way, and i don’t always say things how i should. on those days, i know i end up treating you badly sometimes — and i’m truly sorry for that. please know it never comes from a place of not caring.
+the truth is, i love you. genuinely. deeply. the love i have for you is real — not confusing, not temporary, not forced. it’s the kind that stays even when things feel messy, even when words come out wrong. so when i say “trust me,” i really mean it with my whole heart.
+it’s only been ten days, and yet i already miss you so much. more than i expected. more than i knew how to explain. your presence, your voice, the comfort of knowing you’re there — it all matters to me more than i ever say out loud.
+i don’t always understand why i say certain things, or why my emotions sometimes turn sharp instead of soft. but please believe this one thing: i never mean those words. not even a little. they don’t reflect how i feel about you, or how much you mean to me.
+if anything, they come from being overwhelmed, not from a lack of love. and if i ever hurt you because of that, i want you to know it hurts me too. i just hope you can see past those moments and remember the part of me that cares for you endlessly.
+always.`;
+
+let i = 0;
+function typeText() {
+  if (i < text.length) {
+    document.getElementById("letter").innerHTML += text.charAt(i);
+    i++;
+    setTimeout(typeText, 35);
+  }
+}
+typeText();
+
+/* Floating hearts automatically */
+setInterval(() => {
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.innerHTML = "❤";
+  h.style.left = Math.random() * 100 + "vw";
+  h.style.animationDuration = (6 + Math.random() * 4) + "s";
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 10000);
+}, 450);
+
+/* Stars */
+for (let i = 0; i < 70; i++) {
+  const s = document.createElement("div");
+  s.className = "star";
+  s.style.left = Math.random() * 100 + "vw";
+  s.style.top = Math.random() * 100 + "vh";
+  s.style.animationDuration = (20 + Math.random() * 25) + "s";
+  document.body.appendChild(s);
+}
+
+/* Music play on first tap */
+let started = false;
+document.body.addEventListener("click", () => {
+  if (!started) {
+    document.getElementById("yt").contentWindow.postMessage(
+      '{"event":"command","func":"playVideo","args":""}', '*'
+    );
+    document.getElementById("tap").style.display = "none";
+    started = true;
+  }
+});
+</script>
+
+</body>
+</html>
